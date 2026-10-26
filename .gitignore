@@ -1,0 +1,9 @@
+# Datos locales del estudiante (SQLite)
+datos/
+
+# Entorno virtual
+.venv/
+
+# Caché de Python y de pytest
+__pycache__/
+.pytest_cache/

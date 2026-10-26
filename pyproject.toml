@@ -1,0 +1,18 @@
+[project]
+name = "organizador-tareas-upb"
+version = "0.1.0"
+description = "Organizador de tareas académicas para estudiantes de la UPB"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi",
+    "uvicorn",
+]
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "httpx",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

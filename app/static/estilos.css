@@ -1,0 +1,121 @@
+/* Estilos responsivos: una columna en celular y dos columnas desde 768 px. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 16px;
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+  color: #1f2330;
+  background: #fafafa;
+  overflow-x: hidden;
+}
+
+header h1 {
+  font-size: 1.5rem;
+  margin: 0 0 16px;
+}
+
+h2 {
+  font-size: 1.2rem;
+  margin: 0 0 12px;
+}
+
+.rejilla {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 768px) {
+  .rejilla {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+section {
+  background: #fff;
+  border: 1px solid #d8dae5;
+  border-radius: 8px;
+  padding: 16px;
+  min-width: 0;
+}
+
+.campo {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+input,
+select,
+textarea,
+button {
+  font: inherit;
+  max-width: 100%;
+  padding: 8px;
+  border: 1px solid #8c90a6;
+  border-radius: 6px;
+}
+
+button {
+  background: #1e66f5;
+  color: #fff;
+  border-color: #1e66f5;
+  cursor: pointer;
+  padding: 8px 16px;
+}
+
+/* Foco visible para navegación con teclado (FR-027, principio V). */
+:focus-visible {
+  outline: 3px solid #1e66f5;
+  outline-offset: 2px;
+}
+
+.errores {
+  color: #a4142b;
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0;
+}
+
+.aviso {
+  background: #eef3ff;
+  border-left: 4px solid #1e66f5;
+  padding: 8px 12px;
+}
+
+.lista {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0 0;
+  display: grid;
+  gap: 8px;
+}
+
+.lista li {
+  border: 1px solid #d8dae5;
+  border-radius: 6px;
+  padding: 8px 12px;
+  overflow-wrap: anywhere;
+}
+
+.tarea strong,
+.tarea .materia,
+.tarea time {
+  display: block;
+}
+
+.muestra-color {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: middle;
+}

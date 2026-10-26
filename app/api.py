@@ -1,0 +1,94 @@
+"""Endpoints JSON de /api: colores, materias y tareas (ver contracts/api.md)."""
+
+import sqlite3
+from collections.abc import Iterator
+from datetime import datetime
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, Request
+from fastapi.responses import JSONResponse
+
+from app import repositorio
+from app.colores import PALETA
+from app.db import conectar
+from app.esquemas import (
+    FORMATO_ENTREGA,
+    Materia,
+    MateriaEntrada,
+    MateriaResumen,
+    Tarea,
+    TareaEntrada,
+)
+
+router = APIRouter(prefix="/api")
+
+
+def obtener_conexion(request: Request) -> Iterator[sqlite3.Connection]:
+    conexion = conectar(request.app.state.ruta_bd)
+    try:
+        yield conexion
+    finally:
+        conexion.close()
+
+
+Conexion = Annotated[sqlite3.Connection, Depends(obtener_conexion)]
+
+
+def error(codigo: int, campo: str | None, mensaje: str) -> JSONResponse:
+    return JSONResponse(status_code=codigo, content={"errores": [{"campo": campo, "mensaje": mensaje}]})
+
+
+def fila_a_tarea(fila: sqlite3.Row) -> Tarea:
+    return Tarea(
+        id=fila["id"],
+        materia=MateriaResumen(
+            id=fila["materia_id"], nombre=fila["materia_nombre"], color=fila["materia_color"]
+        ),
+        titulo=fila["titulo"],
+        descripcion=fila["descripcion"],
+        fecha_entrega=fila["fecha_entrega"],
+        completada=bool(fila["completada"]),
+        creada_en=fila["creada_en"],
+    )
+
+
+@router.get("/colores")
+def listar_colores() -> list[dict[str, str]]:
+    return PALETA
+
+
+@router.get("/materias", response_model=list[Materia])
+def listar_materias(conexion: Conexion) -> list[dict]:
+    return [dict(fila) for fila in repositorio.listar_materias(conexion)]
+
+
+@router.post("/materias", status_code=201, response_model=Materia)
+def crear_materia(entrada: MateriaEntrada, conexion: Conexion) -> dict | JSONResponse:
+    try:
+        materia_id = repositorio.crear_materia(conexion, entrada.nombre, entrada.color)
+    except repositorio.NombreDuplicado:
+        return error(409, "nombre", "Ya existe una materia con ese nombre.")
+    return dict(repositorio.obtener_materia(conexion, materia_id))
+
+
+@router.get("/tareas", response_model=list[Tarea])
+def listar_tareas(conexion: Conexion) -> list[Tarea]:
+    return [fila_a_tarea(fila) for fila in repositorio.listar_tareas(conexion)]
+
+
+@router.post("/tareas", status_code=201, response_model=Tarea)
+def crear_tarea(entrada: TareaEntrada, conexion: Conexion) -> Tarea | JSONResponse:
+    fecha_entrega = datetime.combine(entrada.fecha, entrada.hora).strftime(FORMATO_ENTREGA)
+    creada_en = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+    try:
+        tarea_id = repositorio.crear_tarea(
+            conexion,
+            entrada.materia_id,
+            entrada.titulo,
+            entrada.descripcion,
+            fecha_entrega,
+            creada_en,
+        )
+    except repositorio.MateriaNoExiste:
+        return error(400, "materia_id", "La materia indicada no existe.")
+    return fila_a_tarea(repositorio.obtener_tarea(conexion, tarea_id))

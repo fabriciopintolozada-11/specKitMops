@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Organizador de tareas UPB</title>
+  <link rel="stylesheet" href="/static/estilos.css">
+</head>
+<body>
+  <header>
+    <h1>Organizador de tareas UPB</h1>
+  </header>
+
+  <main class="rejilla">
+    <section aria-labelledby="titulo-materias">
+      <h2 id="titulo-materias">Materias</h2>
+
+      <form id="form-materia" novalidate>
+        <div class="campo">
+          <label for="materia-nombre">Nombre de la materia</label>
+          <input id="materia-nombre" name="nombre" type="text" maxlength="50" required>
+        </div>
+        <div class="campo">
+          <label for="materia-color">Color</label>
+          <select id="materia-color" name="color" required></select>
+        </div>
+        <button type="submit">Agregar materia</button>
+        <ul class="errores" id="errores-materia" role="alert"></ul>
+      </form>
+
+      <ul class="lista" id="lista-materias"></ul>
+    </section>
+
+    <section aria-labelledby="titulo-tareas">
+      <h2 id="titulo-tareas">Tareas</h2>
+
+      <p class="aviso" id="aviso-sin-materias" hidden>
+        Primero registra una materia para poder crear tareas.
+      </p>
+
+      <form id="form-tarea" novalidate>
+        <div class="campo">
+          <label for="tarea-materia">Materia</label>
+          <select id="tarea-materia" name="materia_id" required></select>
+        </div>
+        <div class="campo">
+          <label for="tarea-titulo">Título</label>
+          <input id="tarea-titulo" name="titulo" type="text" maxlength="100" required>
+        </div>
+        <div class="campo">
+          <label for="tarea-descripcion">Descripción (opcional)</label>
+          <textarea id="tarea-descripcion" name="descripcion" maxlength="500" rows="3"></textarea>
+        </div>
+        <div class="campo">
+          <label for="tarea-fecha">Fecha de entrega</label>
+          <input id="tarea-fecha" name="fecha" type="date" required>
+        </div>
+        <div class="campo">
+          <label for="tarea-hora">Hora (opcional, por defecto 23:59)</label>
+          <input id="tarea-hora" name="hora" type="time">
+        </div>
+        <button type="submit">Agregar tarea</button>
+        <ul class="errores" id="errores-tarea" role="alert"></ul>
+      </form>
+
+      <p class="aviso" id="aviso-sin-tareas" hidden>
+        Todavía no tienes tareas. Agrega la primera con el formulario de arriba.
+      </p>
+      <ul class="lista" id="lista-tareas"></ul>
+    </section>
+  </main>
+
+  <script src="/static/app.js" defer></script>
+</body>
+</html>
