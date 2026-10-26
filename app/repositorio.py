@@ -75,3 +75,58 @@ def obtener_tarea(conexion: sqlite3.Connection, tarea_id: int) -> sqlite3.Row | 
 
 def listar_tareas(conexion: sqlite3.Connection) -> list[sqlite3.Row]:
     return conexion.execute(SELECT_TAREAS + " ORDER BY t.fecha_entrega, t.id").fetchall()
+
+
+def actualizar_materia(conexion: sqlite3.Connection, materia_id: int, nombre: str, color: str) -> bool:
+    nombre = nombre.strip()
+    try:
+        cursor = conexion.execute(
+            "UPDATE materia SET nombre = ?, nombre_normalizado = ?, color = ? WHERE id = ?",
+            (nombre, nombre.casefold(), color, materia_id),
+        )
+    except sqlite3.IntegrityError as error:
+        conexion.rollback()
+        raise NombreDuplicado(nombre) from error
+    conexion.commit()
+    return cursor.rowcount > 0
+
+
+def eliminar_materia(conexion: sqlite3.Connection, materia_id: int) -> bool:
+    """La clave foránea elimina las tareas de la materia en la misma transacción."""
+    cursor = conexion.execute("DELETE FROM materia WHERE id = ?", (materia_id,))
+    conexion.commit()
+    return cursor.rowcount > 0
+
+
+def actualizar_tarea(
+    conexion: sqlite3.Connection,
+    tarea_id: int,
+    materia_id: int,
+    titulo: str,
+    descripcion: str | None,
+    fecha_entrega: str,
+) -> bool:
+    if obtener_tarea(conexion, tarea_id) is None:
+        return False
+    if obtener_materia(conexion, materia_id) is None:
+        raise MateriaNoExiste(materia_id)
+    cursor = conexion.execute(
+        "UPDATE tarea SET materia_id = ?, titulo = ?, descripcion = ?, fecha_entrega = ? WHERE id = ?",
+        (materia_id, titulo.strip(), (descripcion or "").strip() or None, fecha_entrega, tarea_id),
+    )
+    conexion.commit()
+    return cursor.rowcount > 0
+
+
+def eliminar_tarea(conexion: sqlite3.Connection, tarea_id: int) -> bool:
+    cursor = conexion.execute("DELETE FROM tarea WHERE id = ?", (tarea_id,))
+    conexion.commit()
+    return cursor.rowcount > 0
+
+
+def actualizar_completada(conexion: sqlite3.Connection, tarea_id: int, completada: bool) -> bool:
+    cursor = conexion.execute(
+        "UPDATE tarea SET completada = ? WHERE id = ?", (int(completada), tarea_id)
+    )
+    conexion.commit()
+    return cursor.rowcount > 0

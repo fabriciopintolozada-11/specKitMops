@@ -110,8 +110,8 @@ implementarse y probarse de forma independiente.
 - [ ] T028 [US3] Implementar `actualizar_completada` en `app/repositorio.py` (depende de T014)
 - [ ] T029 [US3] Implementar el endpoint `PATCH /api/tareas/{id}/completada` con el modelo `CompletadaEntrada` en `app/esquemas.py` y `app/api.py` (depende de T028)
 - [ ] T030 [US3] Implementar en `app/estado.py` la función `es_vencida(tarea, ahora)` y en `app/api.py` los parámetros `materia_id` y `estado` de `GET /api/tareas`, con filtro de "vencidas" aplicado después de calcular la marca (depende de T022, T023)
-- [ ] T031 [US3] Implementar en `app/static/app.js` la casilla para completar tareas, los selectores de materia y de estado, y el mensaje de "no hay tareas con este filtro" (FR-024) (depende de T029, T030)
-- [ ] T032 [P] [US3] Agregar en `app/static/estilos.css` el estilo de tareas completadas (texto tachado o atenuado, sin marca de vencida ni urgente)
+- [X] T031 [US3] Implementar en `app/static/app.js` la casilla para completar tareas, los selectores de materia y de estado, y el mensaje de "no hay tareas con este filtro" (FR-024) (depende de T029, T030)
+- [X] T032 [P] [US3] Agregar en `app/static/estilos.css` el estilo de tareas completadas (texto tachado o atenuado, sin marca de vencida ni urgente)
 
 **Punto de control**: Las historias 1 a 3 funcionan de forma independiente y combinada.
 
@@ -125,14 +125,14 @@ implementarse y probarse de forma independiente.
 
 ### Pruebas de la historia 4 ⚠️
 
-- [ ] T033 [P] [US4] Pruebas en `tests/test_api_materias.py` de `PUT /api/materias/{id}` (validaciones y 409 al repetir nombre) y `DELETE /api/materias/{id}` (204, eliminación en cascada de sus tareas y 404)
-- [ ] T034 [P] [US4] Pruebas en `tests/test_api_tareas.py` de `PUT /api/tareas/{id}` (la marca se recalcula con la nueva fecha; 400 si la materia no existe) y `DELETE /api/tareas/{id}` (204 y 404)
+- [X] T033 [P] [US4] Pruebas en `tests/test_api_materias.py` de `PUT /api/materias/{id}` (validaciones y 409 al repetir nombre) y `DELETE /api/materias/{id}` (204, eliminación en cascada de sus tareas y 404)
+- [X] T034 [P] [US4] Pruebas en `tests/test_api_tareas.py` de `PUT /api/tareas/{id}` (la marca se recalcula con la nueva fecha; 400 si la materia no existe) y `DELETE /api/tareas/{id}` (204 y 404)
 
 ### Implementación de la historia 4
 
-- [ ] T035 [US4] Implementar en `app/repositorio.py` `actualizar_materia`, `eliminar_materia`, `actualizar_tarea` y `eliminar_tarea`, reutilizando las reglas de validación de T013 y T014
-- [ ] T036 [US4] Implementar en `app/api.py` los endpoints `PUT` y `DELETE` de materias y tareas con los códigos de [contracts/api.md](contracts/api.md) (depende de T035)
-- [ ] T037 [US4] Implementar en `app/static/app.js` los botones de editar y eliminar; la eliminación de una materia muestra cuántas tareas se borrarán (`total_tareas`) y solo llama al API si el estudiante confirma (FR-005) (depende de T036)
+- [X] T035 [US4] Implementar en `app/repositorio.py` `actualizar_materia`, `eliminar_materia`, `actualizar_tarea` y `eliminar_tarea`, reutilizando las reglas de validación de T013 y T014
+- [X] T036 [US4] Implementar en `app/api.py` los endpoints `PUT` y `DELETE` de materias y tareas con los códigos de [contracts/api.md](contracts/api.md) (depende de T035)
+- [X] T037 [US4] Implementar en `app/static/app.js` los botones de editar y eliminar; la eliminación de una materia muestra cuántas tareas se borrarán (`total_tareas`) y solo llama al API si el estudiante confirma (FR-005) (depende de T036)
 
 **Punto de control**: Las cuatro historias funcionan de forma independiente y combinada.
 
@@ -142,9 +142,9 @@ implementarse y probarse de forma independiente.
 
 **Propósito**: Verificación final y calidad transversal.
 
-- [ ] T038 Ejecutar `uv run pytest` y corregir cualquier fallo hasta que la suite completa pase
-- [ ] T039 [P] Revisar en `app/static/index.html` y `app/static/app.js` que todos los formularios tengan etiquetas, que el orden de tabulación sea lógico y que el foco sea visible (Principio V, CHK026 y CHK027)
-- [ ] T040 [P] Revisar que todos los mensajes de error visibles y devueltos por la API estén en español, incluido el mensaje de error de validación de T007 (FR-027)
+- [X] T038 Ejecutar `uv run pytest` y corregir cualquier fallo hasta que la suite completa pase
+- [X] T039 [P] Revisar en `app/static/index.html` y `app/static/app.js` que todos los formularios tengan etiquetas, que el orden de tabulación sea lógico y que el foco sea visible (Principio V, CHK026 y CHK027)
+- [X] T040 [P] Revisar que todos los mensajes de error visibles y devueltos por la API estén en español, incluido el mensaje de error de validación de T007 (FR-027)
 - [ ] T041 Ejecutar a mano los 12 escenarios de [quickstart.md](quickstart.md) y anotar el resultado de cada uno en esta tarea
 - [ ] T042 [P] Actualizar [quickstart.md](quickstart.md) si algún comando del arranque o de las pruebas cambió durante la implementación
 
@@ -238,3 +238,52 @@ Tarea: "Diseño base en app/static/estilos.css"
 - [ ] T050 Manejar en `app/static/app.js` las respuestas que no son JSON y las fallas de red en `pedir()`, mostrando un mensaje en español per FR-027 (partial)
 - [ ] T051 Hacer que el aviso "Primero registra una materia" en `app/static/index.html` lleve al formulario de materias (enlace o enfoque del campo nombre) per Casos límite (materia no registrada) (partial)
 - [ ] T052 Justificar en `specs/001-organizador-tareas/plan.md` o eliminar la variable de entorno `ORGANIZADOR_BD` de `app/main.py` per plan: estructura y configuración (unrequested)
+
+
+## Entrega de Sergio: T031 a T041 (2026-10-26)
+
+- **T031–T037**: implementadas las casillas de completado, los filtros combinados,
+  el mensaje sin resultados, el estilo de completadas y la edición/eliminación de
+  materias y tareas. El borrado de materia consulta `total_tareas` antes de pedir
+  confirmación; cancelar no envía ninguna petición de eliminación.
+- **Dependencias de Julio**: esta revisión todavía no incluía T022, T023, T028,
+  T029 ni T030. Se agregó el soporte de marcas, completado y filtros requerido
+  para integrar T031 y recalcular la marca en T034/T036. También se representan
+  las marcas en la interfaz para poder observar su desaparición al completar.
+  No se cambiaron las casillas asignadas a Julio; sus pruebas y revisión siguen
+  correspondiendo a ese grupo.
+- **T038**: una única ejecución de la suite, mediante `uv run --no-sync pytest`
+  después de preparar las dependencias con `uv sync`: **34 pruebas aprobadas en
+  0.41 s**. Incluye 18 casos nuevos de edición, eliminación, cascada, conservación
+  de datos ante entradas inválidas, marcas recalculadas, filtros/completado y
+  errores HTTP en español. El primer intento restringido de uv no llegó a iniciar
+  pytest por falta de permiso sobre su caché. La ejecución efectiva produjo un
+  aviso de deprecación de Starlette por el uso de httpx con TestClient.
+- **T039**: revisión del código de las etiquetas de formularios y filtros,
+  etiquetas de casillas, botones con contexto, orden natural de tabulación,
+  foco visible y recuperación del foco al completar, editar, cancelar o eliminar.
+  Los errores de campos se asocian mediante `aria-describedby` y enfocan el
+  primer campo inválido. No se hizo un recorrido interactivo con teclado.
+- **T040**: revisión de mensajes de interfaz y validación en español; los errores
+  del navegador se presentan con un mensaje propio en español. Se tradujeron
+  además los errores HTTP de rutas inexistentes y métodos no permitidos.
+- **T041**: pendiente de ejecución manual. Por instrucción expresa del usuario
+  se limitó la validación a una sola ejecución de pytest; no se ejecutaron los
+  12 escenarios manuales ni se marcaron como aprobados. Por el mismo motivo,
+  las pruebas de T033/T034 se escribieron antes de implementar y se ejecutaron
+  únicamente al finalizar, sin una ejecución inicial para observar sus fallos.
+
+| Escenario de quickstart | Resultado de esta entrega |
+|---|---|
+| 1. Crear tarea sin materias | No ejecutado manualmente |
+| 2. Registrar materia y rechazar duplicado | No ejecutado manualmente |
+| 3. Ordenar entregas y mostrar marcas | No ejecutado manualmente |
+| 4. Rechazar título de espacios | No ejecutado manualmente |
+| 5. Completar y desmarcar tarea vencida | No ejecutado manualmente |
+| 6. Filtrar por materia y pendientes | No ejecutado manualmente |
+| 7. Filtros sin resultados | No ejecutado manualmente |
+| 8. Editar fecha y recalcular posición/marca | No ejecutado manualmente |
+| 9. Confirmar eliminación de materia con sus tareas | No ejecutado manualmente |
+| 10. Reiniciar y comprobar persistencia | No ejecutado manualmente |
+| 11. Usar desde celular a 360 px | No ejecutado manualmente |
+| 12. Recorrer con teclado | No ejecutado manualmente |

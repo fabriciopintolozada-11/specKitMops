@@ -1,5 +1,7 @@
 """Pruebas de la API de materias (historia 1, FR-001 a FR-003)."""
 
+import pytest
+
 from app.colores import PALETA
 
 AZUL = PALETA[0]["codigo"]
@@ -75,3 +77,51 @@ def test_campo_obligatorio_faltante_da_422_en_espanol(cliente):
     error = respuesta.json()["errores"][0]
     assert error["campo"] == "color"
     assert error["mensaje"] == "Este campo es obligatorio."
+
+
+def test_editar_materia_actualiza_nombre_color_y_sus_tareas(cliente):
+    materia_id = cliente.post("/api/materias", json={"nombre": "Cálculo", "color": AZUL}).json()["id"]
+    cliente.post("/api/tareas", json={"materia_id": materia_id, "titulo": "Práctica", "fecha": "2026-11-03"})
+    respuesta = cliente.put(f"/api/materias/{materia_id}", json={"nombre": "  Álgebra  ", "color": ROJO})
+    assert respuesta.status_code == 200
+    assert respuesta.json() == {"id": materia_id, "nombre": "Álgebra", "color": ROJO, "total_tareas": 1}
+    assert cliente.get("/api/tareas").json()[0]["materia"] == {"id": materia_id, "nombre": "Álgebra", "color": ROJO}
+    assert cliente.put(f"/api/materias/{materia_id}", json={"nombre": "álgebra", "color": AZUL}).status_code == 200
+    duplicado = cliente.post("/api/materias", json={"nombre": "ÁLGEBRA", "color": AZUL})
+    assert duplicado.status_code == 409
+
+
+@pytest.mark.parametrize("campos,campo", [({"nombre": " "}, "nombre"), ({"nombre": "a" * 51}, "nombre"), ({"color": "#000000"}, "color")])
+def test_editar_materia_valida_sin_modificar_datos(cliente, campos, campo):
+    original = cliente.post("/api/materias", json={"nombre": "Cálculo", "color": AZUL}).json()
+    respuesta = cliente.put(f"/api/materias/{original['id']}", json={"nombre": "Cálculo", "color": AZUL, **campos})
+    assert respuesta.status_code == 422
+    assert respuesta.json()["errores"][0]["campo"] == campo
+    assert cliente.get("/api/materias").json() == [original]
+
+
+def test_editar_materia_rechaza_nombre_duplicado(cliente):
+    cliente.post("/api/materias", json={"nombre": "Cálculo", "color": AZUL})
+    materia_id = cliente.post("/api/materias", json={"nombre": "Física", "color": ROJO}).json()["id"]
+    respuesta = cliente.put(f"/api/materias/{materia_id}", json={"nombre": " CÁLCULO ", "color": AZUL})
+    assert respuesta.status_code == 409
+    assert respuesta.json()["errores"][0]["mensaje"] == "Ya existe una materia con ese nombre."
+    assert len(cliente.get("/api/materias").json()) == 2
+
+
+def test_eliminar_materia_borra_solo_sus_tareas(cliente):
+    ids = [cliente.post("/api/materias", json={"nombre": nombre, "color": AZUL}).json()["id"] for nombre in ("Cálculo", "Física")]
+    for materia_id in ids:
+        cliente.post("/api/tareas", json={"materia_id": materia_id, "titulo": "Práctica", "fecha": "2026-11-03"})
+    respuesta = cliente.delete(f"/api/materias/{ids[0]}")
+    assert respuesta.status_code == 204
+    assert respuesta.content == b""
+    assert [m["id"] for m in cliente.get("/api/materias").json()] == [ids[1]]
+    assert [t["materia"]["id"] for t in cliente.get("/api/tareas").json()] == [ids[1]]
+    assert cliente.delete(f"/api/materias/{ids[0]}").status_code == 404
+
+
+def test_editar_materia_inexistente_da_404(cliente):
+    respuesta = cliente.put("/api/materias/999", json={"nombre": "Cálculo", "color": AZUL})
+    assert respuesta.status_code == 404
+    assert respuesta.json()["errores"][0]["mensaje"] == "La materia indicada no existe."

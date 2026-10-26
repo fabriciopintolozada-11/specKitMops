@@ -119,3 +119,51 @@ button {
   margin-right: 6px;
   vertical-align: middle;
 }
+
+[hidden] { display: none !important; }
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.filtros {
+  margin: 20px 0 12px;
+  min-width: 0;
+  border: 1px solid #8c90a6;
+  border-radius: 6px;
+}
+
+input, select, textarea { min-width: 0; }
+
+input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.completar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.tarea.completada strong {
+  text-decoration: line-through;
+  color: #555b6b;
+}
+
+.marca {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.marca.vencida { background: #ffe5e9; color: #8b1026; }
+.marca.urgente { background: #fff0ce; color: #704300; }
+button:disabled { cursor: wait; opacity: 0.7; }
+[aria-invalid="true"] { border-color: #a4142b; }

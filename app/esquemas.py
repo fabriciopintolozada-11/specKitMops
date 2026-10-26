@@ -3,7 +3,7 @@
 from datetime import date, time
 from typing import Annotated, Any, Literal
 
-from pydantic import BaseModel, Field, StringConstraints, field_validator
+from pydantic import BaseModel, Field, StrictBool, StringConstraints, field_validator
 
 from app.colores import CODIGOS_VALIDOS
 
@@ -91,3 +91,8 @@ class Tarea(BaseModel):
     fecha_entrega: str
     completada: bool
     creada_en: str
+    marca: Literal["vencida", "urgente"] | None = None
+
+
+class CompletadaEntrada(BaseModel):
+    completada: StrictBool

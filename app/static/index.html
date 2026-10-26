@@ -24,7 +24,10 @@
           <label for="materia-color">Color</label>
           <select id="materia-color" name="color" required></select>
         </div>
-        <button type="submit">Agregar materia</button>
+        <div class="acciones">
+          <button id="guardar-materia" type="submit">Agregar materia</button>
+          <button id="cancelar-materia" type="button" hidden>Cancelar edición</button>
+        </div>
         <ul class="errores" id="errores-materia" role="alert"></ul>
       </form>
 
@@ -59,11 +62,31 @@
           <label for="tarea-hora">Hora (opcional, por defecto 23:59)</label>
           <input id="tarea-hora" name="hora" type="time">
         </div>
-        <button type="submit">Agregar tarea</button>
+        <div class="acciones">
+          <button id="guardar-tarea" type="submit">Agregar tarea</button>
+          <button id="cancelar-tarea" type="button" hidden>Cancelar edición</button>
+        </div>
         <ul class="errores" id="errores-tarea" role="alert"></ul>
       </form>
 
-      <p class="aviso" id="aviso-sin-tareas" hidden>
+      <fieldset class="filtros">
+        <legend>Filtrar tareas</legend>
+        <div class="campo">
+          <label for="filtro-materia">Materia</label>
+          <select id="filtro-materia"><option value="">Todas las materias</option></select>
+        </div>
+        <div class="campo">
+          <label for="filtro-estado">Estado</label>
+          <select id="filtro-estado">
+            <option value="todas">Todas</option>
+            <option value="pendientes">Pendientes</option>
+            <option value="completadas">Completadas</option>
+            <option value="vencidas">Vencidas</option>
+          </select>
+        </div>
+      </fieldset>
+      <ul class="errores" id="errores-listado" role="alert"></ul>
+      <p class="aviso" id="aviso-sin-tareas" role="status" hidden>
         Todavía no tienes tareas. Agrega la primera con el formulario de arriba.
       </p>
       <ul class="lista" id="lista-tareas"></ul>
