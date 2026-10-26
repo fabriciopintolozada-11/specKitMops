@@ -119,3 +119,32 @@ button {
   margin-right: 6px;
   vertical-align: middle;
 }
+
+/* Marcas de vencida y urgente: texto, color y borde (FR-020). Contraste AA sobre su fondo. */
+.marca {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0 8px;
+  border-radius: 999px;
+  vertical-align: middle;
+}
+
+.marca-vencida {
+  background: #a4142b;
+  color: #fff;
+}
+
+.marca-urgente {
+  background: #fff1d6;
+  color: #7a4100;
+  border: 1px solid #c77700;
+}
+
+.lista li.tarea-vencida {
+  border-left: 4px solid #a4142b;
+}
+
+.lista li.tarea-urgente {
+  border-left: 4px solid #c77700;
+}

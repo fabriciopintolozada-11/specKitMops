@@ -14,24 +14,7 @@ const elementos = {
   avisoSinTareas: document.getElementById("aviso-sin-tareas"),
 };
 
-const ETIQUETAS_CAMPO = {
-  nombre: "Nombre",
-  color: "Color",
-  materia_id: "Materia",
-  titulo: "Título",
-  descripcion: "Descripción",
-  fecha: "Fecha de entrega",
-  hora: "Hora",
-};
-
-const MENSAJE_SIN_CONEXION = "No se pudo conectar con el servidor. Intenta de nuevo.";
-const MENSAJE_INESPERADO = "Ocurrió un error inesperado. Intenta de nuevo.";
-
-function errorDeApi(errores) {
-  const error = new Error(errores[0].mensaje);
-  error.errores = errores;
-  return error;
-}
+const ETIQUETAS_MARCA = { vencida: "Vencida", urgente: "Urgente" };
 
 async function pedir(ruta, opciones = {}) {
   let respuesta;
@@ -137,6 +120,14 @@ async function cargarTareas() {
       entrega.textContent = `Entrega: ${formatearEntrega(tarea.fecha_entrega)}`;
 
       item.append(titulo, materia, entrega);
+      // La marca se muestra con texto además del color (FR-020).
+      if (tarea.marca) {
+        item.classList.add(`tarea-${tarea.marca}`);
+        const marca = document.createElement("span");
+        marca.className = `marca marca-${tarea.marca}`;
+        marca.textContent = ETIQUETAS_MARCA[tarea.marca];
+        titulo.append(" ", marca);
+      }
       if (tarea.descripcion) {
         const descripcion = document.createElement("p");
         descripcion.textContent = tarea.descripcion;

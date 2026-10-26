@@ -80,15 +80,15 @@ implementarse y probarse de forma independiente.
 
 ### Pruebas de la historia 2 ⚠️
 
-- [ ] T020 [P] [US2] Pruebas unitarias de `calcular_marca` en `tests/test_estado.py`: completada sin marca; vencida 1 minuto después de la entrega; urgente en la hora exacta de entrega y a exactamente 48 h (límite inclusivo); sin marca a 48 h y 1 minuto; sin marca si la entrega es posterior a 48 h
-- [ ] T021 [P] [US2] Pruebas de API en `tests/test_api_tareas.py`: el campo `marca` aparece en el listado con el valor esperado para cada caso; una tarea completada no lleva marca
+- [X] T020 [P] [US2] Pruebas unitarias de `calcular_marca` en `tests/test_estado.py`: completada sin marca; vencida 1 minuto después de la entrega; urgente en la hora exacta de entrega y a exactamente 48 h (límite inclusivo); sin marca a 48 h y 1 minuto; sin marca si la entrega es posterior a 48 h
+- [X] T021 [P] [US2] Pruebas de API en `tests/test_api_tareas.py`: el campo `marca` aparece en el listado con el valor esperado para cada caso; una tarea completada no lleva marca
 
 ### Implementación de la historia 2
 
-- [ ] T022 [US2] Implementar `calcular_marca(tarea, ahora)` como función pura en `app/estado.py`, con las cuatro reglas de [data-model.md](data-model.md) evaluadas en orden
-- [ ] T023 [US2] Integrar `calcular_marca` en `app/api.py` con la hora local del servidor como `ahora` en todas las respuestas que devuelven tareas (listado, creación y edición), y agregar el campo `marca` a `Tarea` en `app/esquemas.py` (depende de T022)
-- [ ] T024 [US2] Mostrar en `app/static/app.js` la etiqueta de texto "Vencida" o "Urgente" junto a cada tarea, además del color (FR-020)
-- [ ] T025 [US2] Agregar en `app/static/estilos.css` los estilos de las marcas de vencida y urgente, con contraste suficiente (depende de T024)
+- [X] T022 [US2] Implementar `calcular_marca(tarea, ahora)` como función pura en `app/estado.py`, con las cuatro reglas de [data-model.md](data-model.md) evaluadas en orden
+- [X] T023 [US2] Integrar `calcular_marca` en `app/api.py` con la hora local del servidor como `ahora` en todas las respuestas que devuelven tareas (listado, creación y edición), y agregar el campo `marca` a `Tarea` en `app/esquemas.py` (depende de T022)
+- [X] T024 [US2] Mostrar en `app/static/app.js` la etiqueta de texto "Vencida" o "Urgente" junto a cada tarea, además del color (FR-020)
+- [X] T025 [US2] Agregar en `app/static/estilos.css` los estilos de las marcas de vencida y urgente, con contraste suficiente (depende de T024)
 
 **Punto de control**: Las historias 1 y 2 funcionan juntas y las marcas son correctas en los límites de 0 y 48 horas.
 
@@ -102,14 +102,14 @@ implementarse y probarse de forma independiente.
 
 ### Pruebas de la historia 3 ⚠️
 
-- [ ] T026 [P] [US3] Pruebas en `tests/test_api_tareas.py` de `PATCH /api/tareas/{id}/completada`: marcar, desmarcar, 404 y 422 cuando falta el campo o no es booleano
-- [ ] T027 [P] [US3] Pruebas en `tests/test_api_tareas.py` de filtros: por `materia_id`, por cada valor de `estado`, combinados, `estado` inválido (422), y lista vacía con mensaje cuando no hay resultados
+- [X] T026 [P] [US3] Pruebas en `tests/test_api_tareas.py` de `PATCH /api/tareas/{id}/completada`: marcar, desmarcar, 404 y 422 cuando falta el campo o no es booleano
+- [X] T027 [P] [US3] Pruebas en `tests/test_api_tareas.py` de filtros: por `materia_id`, por cada valor de `estado`, combinados, `estado` inválido (422), y lista vacía con mensaje cuando no hay resultados
 
 ### Implementación de la historia 3
 
-- [ ] T028 [US3] Implementar `actualizar_completada` en `app/repositorio.py` (depende de T014)
-- [ ] T029 [US3] Implementar el endpoint `PATCH /api/tareas/{id}/completada` con el modelo `CompletadaEntrada` en `app/esquemas.py` y `app/api.py` (depende de T028)
-- [ ] T030 [US3] Implementar en `app/estado.py` la función `es_vencida(tarea, ahora)` y en `app/api.py` los parámetros `materia_id` y `estado` de `GET /api/tareas`, con filtro de "vencidas" aplicado después de calcular la marca (depende de T022, T023)
+- [X] T028 [US3] Implementar `actualizar_completada` en `app/repositorio.py` (depende de T014)
+- [X] T029 [US3] Implementar el endpoint `PATCH /api/tareas/{id}/completada` con el modelo `CompletadaEntrada` en `app/esquemas.py` y `app/api.py` (depende de T028)
+- [X] T030 [US3] Implementar en `app/estado.py` la función `es_vencida(tarea, ahora)` y en `app/api.py` los parámetros `materia_id` y `estado` de `GET /api/tareas`, con filtro de "vencidas" aplicado después de calcular la marca (depende de T022, T023)
 - [ ] T031 [US3] Implementar en `app/static/app.js` la casilla para completar tareas, los selectores de materia y de estado, y el mensaje de "no hay tareas con este filtro" (FR-024) (depende de T029, T030)
 - [ ] T032 [P] [US3] Agregar en `app/static/estilos.css` el estilo de tareas completadas (texto tachado o atenuado, sin marca de vencida ni urgente)
 
