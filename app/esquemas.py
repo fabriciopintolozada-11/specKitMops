@@ -91,8 +91,14 @@ class Tarea(BaseModel):
     fecha_entrega: str
     completada: bool
     creada_en: str
+    # Se calcula en cada respuesta con app.estado.calcular_marca (FR-019).
     marca: Literal["vencida", "urgente"] | None = None
 
 
 class CompletadaEntrada(BaseModel):
+    # Estricto: solo true o false, no "sí" ni 1 (contracts/api.md).
     completada: StrictBool
+
+
+# Valores del parámetro `estado` de GET /api/tareas (FR-022).
+EstadoFiltro = Literal["todas", "pendientes", "completadas", "vencidas"]

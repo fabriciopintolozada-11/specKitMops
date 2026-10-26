@@ -79,6 +79,14 @@ def test_campo_obligatorio_faltante_da_422_en_espanol(cliente):
     assert error["mensaje"] == "Este campo es obligatorio."
 
 
+def test_nombre_duplicado_con_tildes_y_mayusculas_da_409(cliente):
+    cliente.post("/api/materias", json={"nombre": "Física", "color": AZUL})
+
+    respuesta = cliente.post("/api/materias", json={"nombre": "FÍSICA", "color": ROJO})
+
+    assert respuesta.status_code == 409
+
+
 def test_editar_materia_actualiza_nombre_color_y_sus_tareas(cliente):
     materia_id = cliente.post("/api/materias", json={"nombre": "Cálculo", "color": AZUL}).json()["id"]
     cliente.post("/api/tareas", json={"materia_id": materia_id, "titulo": "Práctica", "fecha": "2026-11-03"})

@@ -1,6 +1,5 @@
 """Punto de entrada de la aplicación: crea FastAPI, la base de datos y sirve el frontend."""
 
-import os
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -16,7 +15,8 @@ from app.db import conectar, crear_esquema
 from app.esquemas import traducir_errores
 
 CARPETA_STATIC = Path(__file__).parent / "static"
-RUTA_BD_POR_DEFECTO = os.environ.get("ORGANIZADOR_BD", "datos/organizador.db")
+RAIZ_PROYECTO = Path(__file__).resolve().parent.parent
+RUTA_BD_POR_DEFECTO = RAIZ_PROYECTO / "datos" / "organizador.db"
 
 
 def crear_app(ruta_bd: str | Path = RUTA_BD_POR_DEFECTO) -> FastAPI:

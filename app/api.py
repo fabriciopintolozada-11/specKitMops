@@ -3,7 +3,7 @@
 import sqlite3
 from collections.abc import Iterator
 from datetime import datetime
-from typing import Annotated, Literal
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, Request, Response
 from fastapi.responses import JSONResponse
@@ -11,16 +11,17 @@ from fastapi.responses import JSONResponse
 from app import repositorio
 from app.colores import PALETA
 from app.db import conectar
-from app.estado import calcular_marca
 from app.esquemas import (
     FORMATO_ENTREGA,
     CompletadaEntrada,
+    EstadoFiltro,
     Materia,
     MateriaEntrada,
     MateriaResumen,
     Tarea,
     TareaEntrada,
 )
+from app.estado import calcular_marca, es_vencida
 
 router = APIRouter(prefix="/api")
 
@@ -40,8 +41,8 @@ def error(codigo: int, campo: str | None, mensaje: str) -> JSONResponse:
     return JSONResponse(status_code=codigo, content={"errores": [{"campo": campo, "mensaje": mensaje}]})
 
 
-def fila_a_tarea(fila: sqlite3.Row, ahora: datetime | None = None) -> Tarea:
-    return Tarea(
+def fila_a_tarea(fila: sqlite3.Row, ahora: datetime) -> Tarea:
+    tarea = Tarea(
         id=fila["id"],
         materia=MateriaResumen(
             id=fila["materia_id"], nombre=fila["materia_nombre"], color=fila["materia_color"]
@@ -51,8 +52,9 @@ def fila_a_tarea(fila: sqlite3.Row, ahora: datetime | None = None) -> Tarea:
         fecha_entrega=fila["fecha_entrega"],
         completada=bool(fila["completada"]),
         creada_en=fila["creada_en"],
-        marca=calcular_marca(fila, ahora if ahora is not None else datetime.now()),
     )
+    tarea.marca = calcular_marca(tarea, ahora)
+    return tarea
 
 
 @router.get("/colores")
@@ -76,19 +78,18 @@ def crear_materia(entrada: MateriaEntrada, conexion: Conexion) -> dict | JSONRes
 
 @router.get("/tareas", response_model=list[Tarea])
 def listar_tareas(
-    conexion: Conexion,
-    materia_id: int | None = None,
-    estado: Literal["todas", "pendientes", "completadas", "vencidas"] = "todas",
+    conexion: Conexion, materia_id: int | None = None, estado: EstadoFiltro = "todas"
 ) -> list[Tarea]:
+    # "vencidas" depende de la hora actual, así que se filtra después de calcular la marca.
+    completada = {"pendientes": False, "completadas": True, "vencidas": False}.get(estado)
     ahora = datetime.now()
-    tareas = [fila_a_tarea(fila, ahora) for fila in repositorio.listar_tareas(conexion)]
-    return [
-        tarea for tarea in tareas
-        if (materia_id is None or tarea.materia.id == materia_id)
-        and (estado != "pendientes" or not tarea.completada)
-        and (estado != "completadas" or tarea.completada)
-        and (estado != "vencidas" or tarea.marca == "vencida")
+    tareas = [
+        fila_a_tarea(fila, ahora)
+        for fila in repositorio.listar_tareas(conexion, materia_id, completada)
     ]
+    if estado == "vencidas":
+        tareas = [tarea for tarea in tareas if es_vencida(tarea, ahora)]
+    return tareas
 
 
 @router.post("/tareas", status_code=201, response_model=Tarea)
@@ -106,7 +107,16 @@ def crear_tarea(entrada: TareaEntrada, conexion: Conexion) -> Tarea | JSONRespon
         )
     except repositorio.MateriaNoExiste:
         return error(400, "materia_id", "La materia indicada no existe.")
-    return fila_a_tarea(repositorio.obtener_tarea(conexion, tarea_id))
+    return fila_a_tarea(repositorio.obtener_tarea(conexion, tarea_id), datetime.now())
+
+
+@router.patch("/tareas/{tarea_id}/completada", response_model=Tarea)
+def actualizar_completada(
+    tarea_id: int, entrada: CompletadaEntrada, conexion: Conexion
+) -> Tarea | JSONResponse:
+    if not repositorio.actualizar_completada(conexion, tarea_id, entrada.completada):
+        return error(404, None, "La tarea no existe.")
+    return fila_a_tarea(repositorio.obtener_tarea(conexion, tarea_id), datetime.now())
 
 
 @router.put("/materias/{materia_id}", response_model=Materia)
@@ -138,7 +148,7 @@ def actualizar_tarea(tarea_id: int, entrada: TareaEntrada, conexion: Conexion) -
         return error(400, "materia_id", "La materia indicada no existe.")
     if not existe:
         return error(404, None, "La tarea indicada no existe.")
-    return fila_a_tarea(repositorio.obtener_tarea(conexion, tarea_id))
+    return fila_a_tarea(repositorio.obtener_tarea(conexion, tarea_id), datetime.now())
 
 
 @router.delete("/tareas/{tarea_id}", status_code=204)
@@ -146,10 +156,3 @@ def eliminar_tarea(tarea_id: int, conexion: Conexion) -> Response:
     if not repositorio.eliminar_tarea(conexion, tarea_id):
         return error(404, None, "La tarea indicada no existe.")
     return Response(status_code=204)
-
-
-@router.patch("/tareas/{tarea_id}/completada", response_model=Tarea)
-def actualizar_completada(tarea_id: int, entrada: CompletadaEntrada, conexion: Conexion) -> Tarea | JSONResponse:
-    if not repositorio.actualizar_completada(conexion, tarea_id, entrada.completada):
-        return error(404, None, "La tarea indicada no existe.")
-    return fila_a_tarea(repositorio.obtener_tarea(conexion, tarea_id))

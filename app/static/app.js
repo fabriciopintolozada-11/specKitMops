@@ -9,16 +9,38 @@ let materiaEnEdicion = null;
 let tareaEnEdicion = null;
 let solicitudTareas = 0;
 
+const MENSAJE_SIN_CONEXION = "No se pudo conectar con el servidor. Revisa la conexión e inténtalo de nuevo.";
+const MENSAJE_INESPERADO = "El servidor devolvió una respuesta inesperada. Inténtalo de nuevo.";
+
+function errorDeApi(errores) {
+  const error = new Error(MENSAJE_INESPERADO);
+  error.errores = errores;
+  return error;
+}
+
 async function pedir(ruta, opciones = {}) {
-  const respuesta = await fetch(ruta, {
-    headers: { "Content-Type": "application/json" }, ...opciones,
-  });
+  let respuesta;
+  try {
+    respuesta = await fetch(ruta, {
+      headers: { "Content-Type": "application/json" },
+      ...opciones,
+    });
+  } catch {
+    throw errorDeApi([{ campo: null, mensaje: MENSAJE_SIN_CONEXION }]);
+  }
   if (respuesta.status === 204) return null;
-  const datos = await respuesta.json();
+
+  let datos = null;
+  try {
+    datos = await respuesta.json();
+  } catch {
+    // La respuesta no es JSON (por ejemplo, un error del servidor sin cuerpo).
+  }
   if (!respuesta.ok) {
-    const error = new Error("No se pudo completar la operación.");
-    error.errores = datos.errores ?? [{ campo: null, mensaje: error.message }];
-    throw error;
+    throw errorDeApi(datos?.errores ?? [{ campo: null, mensaje: MENSAJE_INESPERADO }]);
+  }
+  if (datos === null) {
+    throw errorDeApi([{ campo: null, mensaje: MENSAJE_INESPERADO }]);
   }
   return datos;
 }
