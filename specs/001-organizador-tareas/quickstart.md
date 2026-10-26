@@ -23,7 +23,7 @@ Alternativa con `pip`:
 ```powershell
 py -3.12 -m venv .venv
 .\.venv\Scripts\Activate.ps1
-pip install -e ".[test]"
+pip install -e . pytest httpx
 ```
 
 ## Ejecutar las pruebas automatizadas

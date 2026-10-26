@@ -14,17 +14,48 @@ const elementos = {
   avisoSinTareas: document.getElementById("aviso-sin-tareas"),
 };
 
+const ETIQUETAS_CAMPO = {
+  nombre: "Nombre",
+  color: "Color",
+  materia_id: "Materia",
+  titulo: "Título",
+  descripcion: "Descripción",
+  fecha: "Fecha de entrega",
+  hora: "Hora",
+};
+
+const MENSAJE_SIN_CONEXION = "No se pudo conectar con el servidor. Intenta de nuevo.";
+const MENSAJE_INESPERADO = "Ocurrió un error inesperado. Intenta de nuevo.";
+
+function errorDeApi(errores) {
+  const error = new Error(errores[0].mensaje);
+  error.errores = errores;
+  return error;
+}
+
 async function pedir(ruta, opciones = {}) {
-  const respuesta = await fetch(ruta, {
-    headers: { "Content-Type": "application/json" },
-    ...opciones,
-  });
+  let respuesta;
+  try {
+    respuesta = await fetch(ruta, {
+      headers: { "Content-Type": "application/json" },
+      ...opciones,
+    });
+  } catch {
+    throw errorDeApi([{ campo: null, mensaje: MENSAJE_SIN_CONEXION }]);
+  }
   if (respuesta.status === 204) return null;
-  const datos = await respuesta.json();
+
+  let datos = null;
+  try {
+    datos = await respuesta.json();
+  } catch {
+    // La respuesta no es JSON (por ejemplo, un error del servidor sin cuerpo).
+  }
   if (!respuesta.ok) {
-    const error = new Error("Error de validación");
-    error.errores = datos.errores ?? [{ campo: null, mensaje: "Ocurrió un error inesperado." }];
-    throw error;
+    throw errorDeApi(datos?.errores ?? [{ campo: null, mensaje: MENSAJE_INESPERADO }]);
+  }
+  if (datos === null) {
+    throw errorDeApi([{ campo: null, mensaje: MENSAJE_INESPERADO }]);
   }
   return datos;
 }
@@ -33,7 +64,8 @@ function mostrarErrores(lista, errores) {
   lista.replaceChildren(
     ...errores.map((error) => {
       const item = document.createElement("li");
-      item.textContent = error.campo ? `${error.campo}: ${error.mensaje}` : error.mensaje;
+      const etiqueta = ETIQUETAS_CAMPO[error.campo] ?? error.campo;
+      item.textContent = etiqueta ? `${etiqueta}: ${error.mensaje}` : error.mensaje;
       return item;
     })
   );

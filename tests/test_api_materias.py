@@ -75,3 +75,11 @@ def test_campo_obligatorio_faltante_da_422_en_espanol(cliente):
     error = respuesta.json()["errores"][0]
     assert error["campo"] == "color"
     assert error["mensaje"] == "Este campo es obligatorio."
+
+
+def test_nombre_duplicado_con_tildes_y_mayusculas_da_409(cliente):
+    cliente.post("/api/materias", json={"nombre": "Física", "color": AZUL})
+
+    respuesta = cliente.post("/api/materias", json={"nombre": "FÍSICA", "color": ROJO})
+
+    assert respuesta.status_code == 409

@@ -1,6 +1,9 @@
 """Pruebas de la API de tareas (historia 1, FR-006 a FR-009, FR-012, FR-014)."""
 
+from fastapi.testclient import TestClient
+
 from app.colores import PALETA
+from app.main import crear_app
 
 AZUL = PALETA[0]["codigo"]
 
@@ -92,3 +95,46 @@ def test_listado_ordenado_por_fecha_con_desempate_por_creacion(cliente):
     titulos = [t["titulo"] for t in cliente.get("/api/tareas").json()]
 
     assert titulos == ["Entrega 2", "Entrega 5 primera", "Entrega 5 segunda", "Entrega 9"]
+
+
+def test_fecha_pasada_se_acepta(cliente):
+    materia_id = crear_materia(cliente)
+
+    respuesta = crear_tarea(cliente, materia_id, titulo="Atrasada", fecha="2020-01-15")
+
+    assert respuesta.status_code == 201
+    assert respuesta.json()["fecha_entrega"] == "2020-01-15T23:59"
+
+
+def test_tarea_nueva_queda_pendiente(cliente):
+    materia_id = crear_materia(cliente)
+
+    tarea = crear_tarea(cliente, materia_id).json()
+
+    assert tarea["completada"] is False
+
+
+def test_listado_incluye_campos_necesarios(cliente):
+    materia_id = crear_materia(cliente)
+    crear_tarea(cliente, materia_id, titulo="Entrega", fecha="2026-11-03", hora="18:00")
+
+    tarea = cliente.get("/api/tareas").json()[0]
+
+    assert tarea["titulo"] == "Entrega"
+    assert tarea["materia"] == {"id": materia_id, "nombre": "Cálculo II", "color": AZUL}
+    assert tarea["fecha_entrega"] == "2026-11-03T18:00"
+    assert tarea["completada"] is False
+
+
+def test_datos_persisten_al_reiniciar_la_aplicacion(tmp_path):
+    ruta = tmp_path / "persistencia.db"
+    with TestClient(crear_app(ruta)) as primera_ejecucion:
+        materia_id = crear_materia(primera_ejecucion)
+        crear_tarea(primera_ejecucion, materia_id, titulo="Persistente")
+
+    with TestClient(crear_app(ruta)) as segunda_ejecucion:
+        materias = segunda_ejecucion.get("/api/materias").json()
+        tareas = segunda_ejecucion.get("/api/tareas").json()
+
+    assert [m["nombre"] for m in materias] == ["Cálculo II"]
+    assert [t["titulo"] for t in tareas] == ["Persistente"]
