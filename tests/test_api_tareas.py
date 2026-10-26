@@ -2,7 +2,10 @@
 
 from datetime import datetime, timedelta
 
+from fastapi.testclient import TestClient
+
 from app.colores import PALETA
+from app.main import crear_app
 
 AZUL = PALETA[0]["codigo"]
 

@@ -146,7 +146,7 @@ implementarse y probarse de forma independiente.
 - [ ] T039 [P] Revisar en `app/static/index.html` y `app/static/app.js` que todos los formularios tengan etiquetas, que el orden de tabulación sea lógico y que el foco sea visible (Principio V, CHK026 y CHK027)
 - [ ] T040 [P] Revisar que todos los mensajes de error visibles y devueltos por la API estén en español, incluido el mensaje de error de validación de T007 (FR-027)
 - [ ] T041 Ejecutar a mano los 12 escenarios de [quickstart.md](quickstart.md) y anotar el resultado de cada uno en esta tarea
-- [ ] T042 [P] Actualizar [quickstart.md](quickstart.md) si algún comando del arranque o de las pruebas cambió durante la implementación
+- [X] T042 [P] Actualizar [quickstart.md](quickstart.md) si algún comando del arranque o de las pruebas cambió durante la implementación
 
 ---
 
@@ -228,13 +228,13 @@ Tarea: "Diseño base en app/static/estilos.css"
 
 ## Phase 8: Convergence
 
-- [ ] T043 Anclar la ruta por defecto de la base de datos a la raíz del proyecto en `app/main.py` (en vez de depender del directorio de trabajo) per FR-025 (partial)
-- [ ] T044 Agregar en `tests/test_api_materias.py` la prueba de unicidad con combinación de tildes y mayúsculas ("FÍSICA" frente a "física" devuelve 409) per FR-002 (partial)
-- [ ] T045 Agregar en `tests/test_api_tareas.py` la prueba de que una tarea con fecha de entrega en el pasado se acepta y se guarda per Casos límite (fecha pasada) (missing)
-- [ ] T046 Mostrar en `app/static/app.js` una etiqueta en español por campo en los mensajes de error (por ejemplo "Título", "Materia") en vez del nombre técnico del campo per FR-027 (partial)
-- [ ] T047 Agregar en `tests/test_api_tareas.py` una prueba automatizada que cierre la aplicación, la vuelva a abrir sobre la misma base y compruebe que las materias y tareas siguen ahí per SC-005 (missing)
-- [ ] T048 Agregar en `tests/test_api_tareas.py` la aserción de que una tarea nueva se crea con `completada = false` per FR-012 (partial)
-- [ ] T049 Agregar en `tests/test_api_tareas.py` una prueba de que el listado incluye título, nombre y color de la materia, fecha de entrega y estado por cada tarea per FR-015 (partial)
-- [ ] T050 Manejar en `app/static/app.js` las respuestas que no son JSON y las fallas de red en `pedir()`, mostrando un mensaje en español per FR-027 (partial)
-- [ ] T051 Hacer que el aviso "Primero registra una materia" en `app/static/index.html` lleve al formulario de materias (enlace o enfoque del campo nombre) per Casos límite (materia no registrada) (partial)
-- [ ] T052 Justificar en `specs/001-organizador-tareas/plan.md` o eliminar la variable de entorno `ORGANIZADOR_BD` de `app/main.py` per plan: estructura y configuración (unrequested)
+- [X] T043 Anclar la ruta por defecto de la base de datos a la raíz del proyecto en `app/main.py` (en vez de depender del directorio de trabajo) per FR-025 (partial)
+- [X] T044 Agregar en `tests/test_api_materias.py` la prueba de unicidad con combinación de tildes y mayúsculas ("FÍSICA" frente a "física" devuelve 409) per FR-002 (partial)
+- [X] T045 Agregar en `tests/test_api_tareas.py` la prueba de que una tarea con fecha de entrega en el pasado se acepta y se guarda per Casos límite (fecha pasada) (missing)
+- [X] T046 Mostrar en `app/static/app.js` una etiqueta en español por campo en los mensajes de error (por ejemplo "Título", "Materia") en vez del nombre técnico del campo per FR-027 (partial)
+- [X] T047 Agregar en `tests/test_api_tareas.py` una prueba automatizada que cierre la aplicación, la vuelva a abrir sobre la misma base y compruebe que las materias y tareas siguen ahí per SC-005 (missing)
+- [X] T048 Agregar en `tests/test_api_tareas.py` la aserción de que una tarea nueva se crea con `completada = false` per FR-012 (partial)
+- [X] T049 Agregar en `tests/test_api_tareas.py` una prueba de que el listado incluye título, nombre y color de la materia, fecha de entrega y estado por cada tarea per FR-015 (partial)
+- [X] T050 Manejar en `app/static/app.js` las respuestas que no son JSON y las fallas de red en `pedir()`, mostrando un mensaje en español per FR-027 (partial)
+- [X] T051 Hacer que el aviso "Primero registra una materia" en `app/static/index.html` lleve al formulario de materias (enlace o enfoque del campo nombre) per Casos límite (materia no registrada) (partial)
+- [X] T052 Justificar en `specs/001-organizador-tareas/plan.md` o eliminar la variable de entorno `ORGANIZADOR_BD` de `app/main.py` per plan: estructura y configuración (unrequested)
