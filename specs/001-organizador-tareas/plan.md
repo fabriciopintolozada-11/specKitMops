@@ -131,3 +131,34 @@ No aplica: el chequeo de la constitución no tiene violaciones.
   [data-model.md](data-model.md) y [contracts/api.md](contracts/api.md).
 - Interpretación de "dispositivo" ajustada a la arquitectura elegida (ver
   [research.md](research.md), decisión 1).
+
+## Asignación de tareas pendientes
+
+Reparto de las 33 tareas pendientes de [tasks.md](tasks.md) en tres grupos de 11, en orden de ID.
+Cada grupo es responsable de implementar y marcar como `[X]` sus tareas.
+
+| Responsable | Tareas | Cantidad | Historias y temas |
+|---|---|---|---|
+| Julio | T020 a T030 | 11 | US2 (marcas vencida y urgente), inicio de US3 (completar y filtrar en el backend) |
+| Sergio | T031 a T041 | 11 | US3 (interfaz de completar y filtros), US4 (editar y eliminar), pruebas y revisión de pulido |
+| Yo | T042 a T052 | 11 | Actualización de quickstart y tareas de convergencia (T043 a T052) |
+
+### Dependencias entre grupos
+
+- **Sergio, T031**: depende de T029 y T030, que son de Julio. Conviene que Sergio empiece con T032
+  (estilos) o con T033 y T034 (pruebas), que no dependen de Julio, mientras Julio termina.
+- **Sergio, T037**: depende de T036 (de Sergio), no hay bloqueo externo.
+- **Sergio, T038 a T041**: deben ejecutarse al final, cuando las historias 1 a 4 estén completas.
+- **Yo, T042**: va al final, porque actualiza `quickstart.md` según lo que quedó implementado.
+- **Yo, T043 a T052**: son correcciones de convergencia. Varias tocan archivos que también editan
+  los otros grupos (ver abajo), así que conviene hacerlas después de que Julio y Sergio terminen
+  sus tareas.
+
+### Archivos compartidos (riesgo de conflictos)
+
+- `app/static/app.js`: Julio (T024), Sergio (T031 y T037), yo (T046 y T050).
+- `tests/test_api_tareas.py`: Julio (T021, T026, T027), Sergio (T034), yo (T045, T047, T048, T049).
+- `app/main.py`: yo (T043, T052).
+
+Recomendación: hacer `git pull` antes de empezar cada tarea y confirmar cambios en commits chicos,
+para que los conflictos en esos tres archivos se resuelvan rápido.
