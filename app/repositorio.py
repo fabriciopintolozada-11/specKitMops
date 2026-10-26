@@ -73,5 +73,30 @@ def obtener_tarea(conexion: sqlite3.Connection, tarea_id: int) -> sqlite3.Row | 
     return conexion.execute(SELECT_TAREAS + " WHERE t.id = ?", (tarea_id,)).fetchone()
 
 
-def listar_tareas(conexion: sqlite3.Connection) -> list[sqlite3.Row]:
-    return conexion.execute(SELECT_TAREAS + " ORDER BY t.fecha_entrega, t.id").fetchall()
+def listar_tareas(
+    conexion: sqlite3.Connection,
+    materia_id: int | None = None,
+    completada: bool | None = None,
+) -> list[sqlite3.Row]:
+    """Lista tareas ordenadas por entrega; los filtros en None no se aplican."""
+    condiciones = []
+    parametros: list[int] = []
+    if materia_id is not None:
+        condiciones.append("t.materia_id = ?")
+        parametros.append(materia_id)
+    if completada is not None:
+        condiciones.append("t.completada = ?")
+        parametros.append(int(completada))
+    where = " WHERE " + " AND ".join(condiciones) if condiciones else ""
+    return conexion.execute(
+        SELECT_TAREAS + where + " ORDER BY t.fecha_entrega, t.id", parametros
+    ).fetchall()
+
+
+def actualizar_completada(conexion: sqlite3.Connection, tarea_id: int, completada: bool) -> bool:
+    """Marca o desmarca la tarea. Devuelve False si la tarea no existe."""
+    cursor = conexion.execute(
+        "UPDATE tarea SET completada = ? WHERE id = ?", (int(completada), tarea_id)
+    )
+    conexion.commit()
+    return cursor.rowcount > 0

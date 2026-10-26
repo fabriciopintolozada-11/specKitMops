@@ -14,6 +14,8 @@ const elementos = {
   avisoSinTareas: document.getElementById("aviso-sin-tareas"),
 };
 
+const ETIQUETAS_MARCA = { vencida: "Vencida", urgente: "Urgente" };
+
 async function pedir(ruta, opciones = {}) {
   const respuesta = await fetch(ruta, {
     headers: { "Content-Type": "application/json" },
@@ -105,6 +107,14 @@ async function cargarTareas() {
       entrega.textContent = `Entrega: ${formatearEntrega(tarea.fecha_entrega)}`;
 
       item.append(titulo, materia, entrega);
+      // La marca se muestra con texto además del color (FR-020).
+      if (tarea.marca) {
+        item.classList.add(`tarea-${tarea.marca}`);
+        const marca = document.createElement("span");
+        marca.className = `marca marca-${tarea.marca}`;
+        marca.textContent = ETIQUETAS_MARCA[tarea.marca];
+        titulo.append(" ", marca);
+      }
       if (tarea.descripcion) {
         const descripcion = document.createElement("p");
         descripcion.textContent = tarea.descripcion;
